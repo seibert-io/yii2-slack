@@ -71,17 +71,18 @@ class Client extends Component
      * @param string $text message text
      * @param string $emoji emoji icon
      * @param array $attachments attachments (@see https://api.slack.com/incoming-webhooks)
+     * @param array $blocks blocks (@see https://api.slack.com/incoming-webhooks)     
      * @param string $channel channel to send to
      */
-    public function send($text = null, $emoji = null, $attachments = [], $channel = null)
+    public function send($text = null, $emoji = null, $attachments = [], $blocks = null, $channel = null)
     {
         $this->httpclient->post($this->url, [
-            'payload' => Json::encode($this->getPayload($text, $emoji, $attachments, $channel)),
+            'payload' => Json::encode($this->getPayload($text, $emoji, $attachments, $blocks, $channel)),
         ])->send();
     }
 
 
-    protected function getPayload($text = null, $emoji = null, $attachments = [], $channel = null)
+    protected function getPayload($text = null, $emoji = null, $attachments = [], $blocks = null, $channel = null)
     {
         if ($text === null) {
             $text = $this->defaultText;
@@ -97,6 +98,9 @@ class Client extends Component
         ];
         if ($channel !== null) {
             $payload['channel'] = $channel;
+        }
+        if ($blocks !== null) {
+            $payload['blocks'] = $blocks;
         }
         if ($emoji !== null) {
             $payload['icon_emoji'] = $emoji;
